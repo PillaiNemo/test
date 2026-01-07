@@ -1,0 +1,1 @@
+// Template file removed. Logic is now handled by .env.local

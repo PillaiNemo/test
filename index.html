@@ -1,0 +1,154 @@
+
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HabitX | Neural Habit Optimization</title>
+    <meta name="description" content="High-performance habit tracking dashboard with real-time stats and AI-powered motivational insights." />
+    <meta property="og:title" content="HabitX | Optimization Dashboard" />
+    <meta property="og:description" content="Track your daily routines with futuristic analytics and AI insights." />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+      :root.dark {
+        --bg-main: #0b0e14;
+        --bg-secondary: #0d1117;
+        --card-bg: #161b22;
+        --border-color: #30363d;
+        --border-hover: #484f58;
+        --text-main: #e6edf3;
+        
+        --heatmap-0: #21262d; 
+        --heatmap-1: #0e4429;
+        --heatmap-2: #006d32;
+        --heatmap-3: #26a641;
+        --heatmap-4: #39d353;
+        --neon-green: #39d353;
+      }
+      :root.light {
+        --bg-main: #f6f8fa;
+        --bg-secondary: #ffffff;
+        --card-bg: #ffffff;
+        --border-color: #d0d7de;
+        --border-hover: #0969da;
+        --text-main: #1f2328;
+        
+        --heatmap-0: #ebedf0;
+        --heatmap-1: #9be9a8;
+        --heatmap-2: #40c463;
+        --heatmap-3: #30a14e;
+        --heatmap-4: #216e39;
+        --neon-green: #2ea043;
+      }
+
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--bg-main);
+        color: var(--text-main);
+        overflow-x: hidden;
+        transition: background-color 0.4s cubic-bezier(0.19, 1, 0.22, 1), color 0.4s ease;
+      }
+      .font-mono {
+        font-family: 'JetBrains+Mono', monospace;
+      }
+      
+      .heatmap-0 { background-color: var(--heatmap-0); }
+      .heatmap-1 { background-color: var(--heatmap-1); }
+      .heatmap-2 { background-color: var(--heatmap-2); }
+      .heatmap-3 { background-color: var(--heatmap-3); }
+      .heatmap-4 { background-color: var(--heatmap-4); }
+
+      .heatmap-box {
+        border-radius: 3px;
+        transition: transform 0.1s ease, filter 0.2s ease, background-color 0.3s ease;
+      }
+      .heatmap-box:hover {
+        transform: scale(1.3);
+        z-index: 20;
+        filter: brightness(1.2);
+      }
+
+      .smoke-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: 1;
+        background: transparent;
+        pointer-events: none;
+      }
+
+      .smoke-cloud {
+        position: absolute;
+        width: 100vw;
+        height: 100vh;
+        background: radial-gradient(circle at center, rgba(59, 130, 246, 0.05) 0%, rgba(59, 130, 246, 0) 60%);
+        border-radius: 50%;
+        filter: blur(120px);
+        opacity: 0.6;
+        animation: float-smoke 30s infinite alternate ease-in-out;
+      }
+
+      @keyframes float-smoke {
+        0% { transform: translate(-10%, -10%) scale(1) rotate(0deg); opacity: 0.3; }
+        50% { transform: translate(10%, 10%) scale(1.3) rotate(10deg); opacity: 0.5; }
+        100% { transform: translate(-5%, 5%) scale(1) rotate(-5deg); opacity: 0.3; }
+      }
+
+      .animate-smoky {
+        animation: smoky-text 2.2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+      }
+
+      @keyframes smoky-text {
+        from { filter: blur(40px); opacity: 0; transform: scale(1.5); letter-spacing: 0.4em; }
+        to { filter: blur(0); opacity: 1; transform: scale(1); letter-spacing: -0.05em; }
+      }
+
+      @keyframes reveal {
+        from { opacity: 0; transform: translateY(20px); filter: blur(5px); }
+        to { opacity: 1; transform: translateY(0); filter: blur(0); }
+      }
+
+      .animate-reveal {
+        animation: reveal 0.8s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track { background: var(--bg-main); }
+      ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+      ::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
+
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "vite": "https://esm.sh/vite@^7.3.1",
+    "path": "https://esm.sh/path@^0.12.7",
+    "@google/genai": "https://esm.sh/@google/genai@^1.34.0",
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@^2.90.0",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "url": "https://esm.sh/url@^0.11.4",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+    <!-- Vite will automatically inject the script bundle here during build -->
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
