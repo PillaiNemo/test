@@ -30,16 +30,14 @@ export default defineConfig(({ mode }) => {
           '@': path.resolve(__dirname, '.'),
         }
       },
-      build: {
-        outDir: 'dist',
-        sourcemap: false,
-        minify: 'terser',
-        terserOptions: {
-          compress: {
-            drop_console: true,
-            drop_debugger: true,
-          },
-        },
-      }
+    build: {
+  outDir: 'dist',
+  sourcemap: false,
+  minify: 'esbuild',
+  esbuild: {
+    drop: ['console', 'debugger'],
+  },
+},
+
     };
 });
